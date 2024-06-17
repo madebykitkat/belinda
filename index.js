@@ -13,6 +13,23 @@ const botToken = process.env.BOT_TOKEN;
 const anniversaryDate = new Date('2024-03-23T00:00:00');
 const timezone = 'Asia/Manila';
 
+const boyfriendId = '703218396052848680';
+const girlfriendId = '899807711821189202';
+
+let activeMoodReminder = false; // Variable to track if mood reminder is active
+let moodReminderInitiator = null; // Variable to store who initiated the mood reminder
+
+function createReminderEmbed(initiator) {
+    const today = new Date().toLocaleDateString('en-US', { timeZone: timezone });
+
+    return new EmbedBuilder()
+        .setTitle('🌟 Mood Reminder 🌟')
+        .setDescription(`Hey <@${initiator}>, please talk to your partner. They're feeling down.`)
+        .setColor(0x9F2B68)
+        .setFooter({ text: `Reminder initiated by: ${moodReminderInitiator}`})
+        .setTimestamp();
+}
+
 function getDaysUntilNextMonthsary() {
     const now = new Date();
     const anniversaryThisMonth = new Date(now.getFullYear(), now.getMonth(), anniversaryDate.getDate());
@@ -57,6 +74,18 @@ function createReminderEmbed() {
         .setTimestamp();
 }
 
+function createReminderEmbed(initiator) {
+    const today = new Date().toLocaleDateString('en-US', { timeZone: timezone });
+    const recipient = initiator === boyfriendId ? girlfriendId : boyfriendId;
+
+    return new EmbedBuilder()
+        .setTitle('🌟 Mood Reminder 🌟')
+        .setDescription(`Hey <@${recipient}>, please talk to your partner. They're feeling down.`)
+        .setColor(0x9F2B68)
+        .setFooter({ text: `Reminder initiated by: <@${initiator}>`})
+        .setTimestamp();
+}
+
 client.once('ready', () => {
     console.log(`Belinda is now awake`);
 
@@ -69,6 +98,14 @@ client.once('ready', () => {
     }, {
         timezone: timezone
     });
+    // Command to initiate mood reminder
+       client.on('messageCreate', message => {
+        if (message.content.toLowerCase() === '!moodReminder') {
+            moodReminderInitiator = message.author.id; // Store who initiated the mood reminder
+            activeMoodReminder = true; // Activate mood reminder
+            const embed = createReminderEmbed(moodReminderInitiator);
+            message.channel.send({ content: '@everyone', embeds: [embed] });
+        }
 
     client.on('messageCreate', message => {
         if (message.content === '!reminder') {
