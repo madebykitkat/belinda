@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const keep_alive = require("./keep_alive.js")
 const cron = require('node-cron');
