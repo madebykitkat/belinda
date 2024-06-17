@@ -53,7 +53,7 @@ function createReminderEmbed() {
         )
         .setThumbnail('https://i.imgur.com/ToYJ8sQ.jpg')
         .setFooter({ text: `Today's Date: ${today}`, iconURL: 'https://i.imgur.com/O5jJt2A.jpg' })
-        .setURL('retrovers3.github.io/luvukate/')
+        .setURL('https://retrovers3.github.io/luvukate/')
         .setTimestamp();
 }
 
