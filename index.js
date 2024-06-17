@@ -46,7 +46,7 @@ function createReminderEmbed() {
     return new EmbedBuilder()
         .setTitle('💖 Anniversary and Monthsary Reminders 💖')
         .setDescription(`Our special dates are coming up! Here are the details:`)
-        .setColor(0xffa500)
+        .setColor(0x9F2B68)
         .addFields(
             { name: 'Anniversary', value: `Our original anniversary is on March 23, 2024. That's in **${daysUntilAnniversary} days**! 🥳`, inline: true },
             { name: 'Next Monthsary', value: `Our next monthsary is in **${daysUntilMonthsary} days**! 🎉`, inline: true },
@@ -71,7 +71,7 @@ client.once('ready', () => {
     });
 
     client.on('messageCreate', message => {
-        if (message.content === '!testReminder') {
+        if (message.content === '!reminder') {
             const channel = client.channels.cache.get(channelId);
             if (channel) {
                 const embed = createReminderEmbed();
