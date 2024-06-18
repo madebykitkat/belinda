@@ -2,7 +2,6 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-const keep_alive = require("./keep_alive.js")
 const cron = require('node-cron');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
