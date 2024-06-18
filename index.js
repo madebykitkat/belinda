@@ -13,7 +13,7 @@ const anniversaryDate = new Date('2024-03-23T00:00:00');
 const timezone = 'Asia/Manila';
 
 const boyfriendId = '703218396052848680';
-const girlfriendId = '703218396052848680';
+const girlfriendId = '899807711821189202';
 
 function getDaysUntilNextMonthsary() {
     const now = new Date();
@@ -90,17 +90,19 @@ client.once('ready', () => {
         // Handle DMs
         if (message.guild === null) { // Message is a DM
             if (message.author.id === boyfriendId || message.author.id === girlfriendId) {
-                const initiatorId = message.author.id;
-                const recipientId = initiatorId === boyfriendId ? girlfriendId : boyfriendId;
-                const embed = createDmReminderEmbed(initiatorId);
+                if (message.content.toLowerCase() === '!moodreminder') {
+                    const initiatorId = message.author.id;
+                    const recipientId = initiatorId === boyfriendId ? girlfriendId : boyfriendId;
+                    const embed = createDmReminderEmbed(initiatorId);
 
-                client.users.fetch(recipientId).then(user => {
-                    user.send({ embeds: [embed] });
-                    message.author.send('Your reminder has been sent.');
-                }).catch(err => {
-                    message.author.send('There was an error sending the reminder.');
-                    console.error(err);
-                });
+                    client.users.fetch(recipientId).then(user => {
+                        user.send({ embeds: [embed] });
+                        message.author.send('Your reminder has been sent.');
+                    }).catch(err => {
+                        message.author.send('There was an error sending the reminder.');
+                        console.error(err);
+                    });
+                }
             }
         } else if (message.content === '!reminder') { // Message is in a guild
             const channel = client.channels.cache.get(channelId);
