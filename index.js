@@ -4,13 +4,16 @@ if (process.env.NODE_ENV !== 'production') {
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const cron = require('node-cron');
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.DirectMessages], partials: ['CHANNEL'] });
 
 const guildId = process.env.GUILD_ID;
 const channelId = process.env.CHANNEL_ID;
 const botToken = process.env.BOT_TOKEN;
 const anniversaryDate = new Date('2024-03-23T00:00:00');
 const timezone = 'Asia/Manila';
+
+const boyfriendId = '703218396052848680';
+const girlfriendId = '703218396052848680';
 
 function getDaysUntilNextMonthsary() {
     const now = new Date();
@@ -56,6 +59,20 @@ function createReminderEmbed() {
         .setTimestamp();
 }
 
+function createDmReminderEmbed(initiatorId) {
+    const recipientId = initiatorId === boyfriendId ? girlfriendId : boyfriendId;
+    const recipientName = initiatorId === boyfriendId ? 'Girlfriend' : 'Boyfriend';
+    const initiatorName = initiatorId === boyfriendId ? 'Boyfriend' : 'Girlfriend';
+
+    return new EmbedBuilder()
+        .setTitle('🌟 Mood Reminder 🌟')
+        .setDescription(`Hey <@${recipientId}>, your ${recipientName} is feeling down. Please talk to them.`)
+        .setColor(0xffa500)
+        .setThumbnail('https://example.com/your_thumbnail_image.png')
+        .setFooter({ text: `Reminder initiated by: ${initiatorName}`, iconURL: 'https://example.com/your_footer_icon.png' })
+        .setTimestamp();
+}
+
 client.once('ready', () => {
     console.log(`Belinda is now awake`);
 
@@ -70,7 +87,22 @@ client.once('ready', () => {
     });
 
     client.on('messageCreate', message => {
-        if (message.content === '!reminder') {
+        // Handle DMs
+        if (message.guild === null) { // Message is a DM
+            if (message.author.id === boyfriendId || message.author.id === girlfriendId) {
+                const initiatorId = message.author.id;
+                const recipientId = initiatorId === boyfriendId ? girlfriendId : boyfriendId;
+                const embed = createDmReminderEmbed(initiatorId);
+
+                client.users.fetch(recipientId).then(user => {
+                    user.send({ embeds: [embed] });
+                    message.author.send('Your reminder has been sent.');
+                }).catch(err => {
+                    message.author.send('There was an error sending the reminder.');
+                    console.error(err);
+                });
+            }
+        } else if (message.content === '!reminder') { // Message is in a guild
             const channel = client.channels.cache.get(channelId);
             if (channel) {
                 const embed = createReminderEmbed();
